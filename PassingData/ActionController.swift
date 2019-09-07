@@ -10,6 +10,7 @@ import UIKit
 
 class ActionController: UIViewController {
 
+    let content = UIView()
     let facebookButton:UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Facebook", for: .normal)
@@ -24,26 +25,42 @@ class ActionController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
+    let textField:UITextField = {
+        let txtField = UITextField()
+        txtField.placeholder = "Name"
+        txtField.textAlignment = .center
+        txtField.translatesAutoresizingMaskIntoConstraints = false
+        return txtField
+    }()
+    var dic = [String:String]()
     override func viewDidLoad() {
         super.viewDidLoad()
+        // navigation item
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(hendleCancel))
         view.backgroundColor = UIColor.white
+        
+        // ui design constraint
         self.setupContentConstraint()
+        self.setupTextFieldConstraint()
     }
     @objc func hendleCancel(){
         dismiss(animated: true, completion: nil)
     }
     @objc func hendleFacebookActionButton(){
-        print("Facebook")
+        dic = ["name":textField.text ?? ""]
+        NotificationCenter.default.post(name: .facebook, object: nil, userInfo: dic)
+        dismiss(animated: true, completion: nil)
     }
     @objc func hendleTwitterActionButton(){
-        print("Twitter")
+        dic = ["name":textField.text ?? ""]
+        NotificationCenter.default.post(name: .twitter, object: nil, userInfo: dic)
+        dismiss(animated: true, completion: nil)
     }
 }
 extension ActionController
 {
     func setupContentConstraint(){
-        let content = UIView()
+
         content.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(content)
         
@@ -68,5 +85,15 @@ extension ActionController
         twitterButton.rightAnchor.constraint(equalTo: content.rightAnchor, constant: -20).isActive = true
         twitterButton.widthAnchor.constraint(equalToConstant: 100).isActive = true
         twitterButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
+    }
+    func setupTextFieldConstraint()
+    {
+        view.addSubview(textField)
+        // need x,y,width,height ancohors
+        textField.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        textField.bottomAnchor.constraint(equalTo: content.topAnchor, constant: -50).isActive = true
+        textField.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20).isActive = true
+        textField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20).isActive = true
+        textField.heightAnchor.constraint(equalToConstant: 40).isActive = true
     }
 }

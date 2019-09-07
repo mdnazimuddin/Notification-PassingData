@@ -13,32 +13,59 @@ class ViewController: UIViewController {
     let button:UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Choose Social", for: .normal)
-        button.addTarget(self, action: #selector(hendleActionButton), for: .touchUpInside)
+        button.addTarget(self, action: #selector(handleActionButton), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     let textLabel:UILabel = {
         let label = UILabel()
-        label.text = "Label"
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     let imageView:UIImageView = {
         let image = UIImageView()
-        image.image = UIImage(named: "chat.png")
+       // image.contentMode = 
         image.translatesAutoresizingMaskIntoConstraints = false
         return image
     }()
+    let returnTextLabel:UILabel = {
+        let label = UILabel()
+        label.text = "Name"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // notification
+        NotificationCenter.default.addObserver(self, selector: #selector(handleFacebook(notification:)), name: .facebook, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleTwitter(notification:)), name: .twitter, object: nil)
         
         // ui constraints setup
         self.setupTextLabelConstraints()
         self.setupButtonConstraints()
         self.setupImageViewConstraints()
+        self.setupReturnTextLabelConstraints()
         
     }
-    @objc func hendleActionButton(){
+    @objc func handleFacebook(notification:Notification)
+    {
+        let text = notification.userInfo!["name"] as? String
+        self.textLabel.text = "Facebook"
+        self.imageView.image = UIImage(named: "facebook.png")
+        self.returnTextLabel.text = text!
+    }
+    @objc func handleTwitter(notification:Notification)
+    {
+        let text = notification.userInfo!["name"] as? String
+        self.textLabel.text = "Twitter"
+        self.imageView.image = UIImage(named: "twitter.png")
+        self.returnTextLabel.text = text!
+    }
+    @objc func handleTextFieldLabel(notification:Notification)
+    {
+    }
+    @objc func handleActionButton(){
         let actionController = ActionController()
         let navController = UINavigationController(rootViewController: actionController)
         present(navController, animated: true)
@@ -76,4 +103,17 @@ extension ViewController {
         imageView.widthAnchor.constraint(equalToConstant: 150).isActive = true
         imageView.heightAnchor.constraint(equalToConstant: 150).isActive = true
     }
+    func setupReturnTextLabelConstraints()  {
+        view.addSubview(returnTextLabel)
+        
+        //need x,y,width,height anchors
+        
+        returnTextLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        returnTextLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 50).isActive = true
+    }
+}
+
+extension Notification.Name{
+    static let facebook = Notification.Name("facebook")
+    static let twitter = Notification.Name("twitter")
 }
